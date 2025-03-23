@@ -14,49 +14,49 @@ The objective is to identify and cluster websites according to the visual simila
 - **Scalability Consideration:** While not mandatory, designing an approach that has the potential to scale is beneficial.
 
 ## General Description
-The solution is designed to cluster websites based on the visual similarities of their logos, using a non-machine learning approach. I codded this application in Python. This is a short diagram on the steps I followed: <pre>
-
+The solution is designed to cluster websites based on the visual similarities of their logos, using a non-machine learning approach. I codded this application in Python. This is a short diagram on the steps I followed: 
+<pre>
 +--------------------------------+  
 |  Logo Extraction               |  
 |  (BeautifulSoup & Selenium)    |  
-+--------------------------------+  
-             │  
-             ▼  
++--------------------------------+
+             |
+             ▼
 +----------------------+  
 |  Image Processing    |  
 | (Resizing, Noise     |  
 |  Reduction, etc.)    |  
-+----------------------+  
-              │  
-              ▼  
++----------------------+
+              │
+              ▼
 +----------------------+  
 |  Feature Extraction  |  
 | (Keypoints, Hashing) |  
-+----------------------+  
-             │  
-             ▼  
++----------------------+
+             │
+             ▼
 +-------------------------+  
 |  Similarity Measurement |  
 | (SSIM, Histograms)      |  
-+-------------------------+  
-              │  
-              ▼  
++-------------------------+
+              │
+              ▼
 +-------------------------+  
 |   Clustering            |  
 | (Graph or Heuristic,    |  
 | DBSCAN (Density-Based   |  
 | Spatial Clustering of   |  
 | Applications with Noise)|  
-+-------------------------+  
-           │  
-           ▼  
++-------------------------+
+           │
+           ▼
 +---------------------+  
 | Scalability &       |  
 | Performance         |  
 | Optimization        |  
-+---------------------+  
-             │  
-             ▼  
++---------------------+
+             │
+             ▼ 
 +--------------------+  
 |  Error Logging     |  
 | (Errors stored in  |  
