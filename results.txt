@@ -1,0 +1,18 @@
+Domain: google.com, Logo: http://google.com/images/branding/googlelogo/1x/googlelogo_white_background_color_272x92dp.png
+Domain: target.com, Logo: https://assets.targetimg1.com/static/images/favicon.ico
+Domain: facebook.com, Logo: https://static.xx.fbcdn.net/rsrc.php/yB/r/2sFJRNmJ5OP.ico
+Domain: microsoft.com, Logo: http://www.microsoft.com/favicon.ico?v2
+Domain: apple.com, Logo: No logo found
+Domain: ikea.com.hk, Logo: http://ikea.com.hk/webroot/img/favicon_16px.png
+Domain: ikea.com.cn, Logo: https://static.web.ikea.cn/static/favicon.ico
+Domain: ikea.com, Logo: https://www.ikea.com/global/en/images/favicon.ico
+Domain: culliganheartland.com, Logo: http://culliganheartland.com/images/favicons/favicon.ico
+Domain: kierpensions.co.uk, Logo: No logo found
+Domain: kier.co.uk, Logo: https://www.kier.co.uk/media/g2rbqsp3/favicon.ico
+Domain: kiergroup.com, Logo: No logo found
+Domain: linde.pe, Logo: https://assets.linde.com/-/media/shared/favicon/favicon.ico
+Group 0: ['target.com', 'microsoft.com', 'linde.pe']
+Group 1: ['facebook.com', 'ikea.com.cn', 'ikea.com']
+Group 3: ['ikea.com.hk']
+Group 6: ['culliganheartland.com']
+Group 7: ['kier.co.uk']
