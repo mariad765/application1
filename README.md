@@ -75,7 +75,7 @@ The following diagram will explain how I managed the extraction of logos:
         │  
         ▼  
 +--------------------------------------+  
-| 1. Try Using Requests & BeautifulSoup|  
+| 1. Try Using Requests & BeautifulSoup |  
 | - Send HTTP request to domain        |  
 | - Parse HTML for <link rel="icon">   |  
 | - Parse HTML for <img> tags          |  
@@ -94,7 +94,8 @@ The following diagram will explain how I managed the extraction of logos:
         ▼  
 +------------------------------------------------+  
 | 3. Look for Favicon and Logo Using Selenium    |  
-| - Check <link> tags for "icon", "shortcut icon"|  
+| - Check <link> tags for "icon",                |  
+|    "shortcut icon"                             |  
 | - Check <img> tags with class names:           |  
 |   "logo", "site-logo", "brand-logo"            |  
 +------------------------------------------------+  
@@ -109,12 +110,64 @@ The following diagram will explain how I managed the extraction of logos:
 +-----------------------------------+  
 | 5. Return Found Logo or None      |  
 | - If favicon found, return it     |  
-| - Else, return extracted <img> src|  
+| - Else, return extracted <img> src |  
 | - Log errors if any occur         |  
 +-----------------------------------+  
 </pre>
 
-Explaation:
+Explanation:
+
+BeautifulSoup4 [https://www.geeksforgeeks.org/beautifulsoup4-module-python/] (*a parser*) is a user-friendly Python library designed for parsing HTML and XML documents. 
+However, I ran into an issue when using it alone. Some links for images were not found. I found a couple 
+of issues with BeautifulSoup:  
+* Parses static HTML content fetched from a webpage, which works well for pages that do not require JavaScript to render their content. However, if the page relies on JavaScript to load or update content dynamically (like loading logos or other images after page load), BeautifulSoup alone can't handle that Struggles with JavaScript-heavy websites because it can't execute scripts. If the website's content is dependent on JavaScript, BeautifulSoup will only show the static HTML content, which might be incomplete.
+* Doesn’t interact with browsers at all, so you can’t use headless browser features to automate scraping tasks.  
+On the small test sample I used, BeautifulSoup failed to find a logo for many domain names. This is when I started looking for another parser. I found Selenium. *Web scraping* sometimes involves extracting data from dynamic content. Selenium is a multipurpose tool that enables you to interact with a browser and grab the data you require, which is ideal for scraping dynamic content.  
+
+![alt text](image.png)  
+
+Steps to scrap using selenium are presented on the following diagram:  
+<pre>
++--------------------------------------------+
+|          Launching a Browser with         |
+|                Selenium                   |
++--------------------------------------------+
+                 |
+                 ▼
++--------------------------------------------+
+|     Set options for Selenium               |
+|     Initialize WebDriver and launch        |
+|     the browser                            |
++--------------------------------------------+
+                 |
+                 ▼
++--------------------------------------------+
+|   Navigating and Interacting with Web      |
+|                Pages                       |
++--------------------------------------------+
+                 |
+                 ▼
++--------------------------------------------+
+|  Use `driver.get(url)` to load the page    |
+|  Find elements with `driver.find_element`  |
+|  Interact with elements (click, enter text) |
++--------------------------------------------+
+                 |
+                 ▼
++--------------------------------------------+
+|     Handling JavaScript Rendered          |
+|            Elements                       |
++--------------------------------------------+
+                 |
+                 ▼
++--------------------------------------------+
+|  Wait for specific elements to appear      |
+|  with WebDriverWait and ExpectedConditions |
+|  Interact with elements once visible       |
++--------------------------------------------+
+
+</pre>
+
 
 
 
