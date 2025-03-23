@@ -16,52 +16,52 @@ The objective is to identify and cluster websites according to the visual simila
 ## General Description
 The solution is designed to cluster websites based on the visual similarities of their logos, using a non-machine learning approach. I codded this application in Python. This is a short diagram on the steps I followed:
 
-+--------------------------------+
-|  Logo Extraction               |
-|  (BeautifulSoup & Selenium)    |
-+--------------------------------+
-        │
-        ▼
-+----------------------+
-|  Image Processing    |
-| (Resizing, Noise     |
-|  Reduction, etc.)    |
-+----------------------+
-        │
-        ▼
-+----------------------+
-|  Feature Extraction  |
-| (Keypoints, Hashing) |
-+----------------------+
-        │
-        ▼
-+-------------------------+
-|  Similarity Measurement |
-| (SSIM, Histograms)      |
-+-------------------------+
-        │
-        ▼
-+-------------------------+
-|   Clustering            |
-| (Graph or Heuristic,    |
-| DBSCAN (Density-Based   |
-| Spatial Clustering of   |
-| Applications with Noise)| 
-+-------------------------+
-        │
-        ▼
-+---------------------+
-| Scalability &       |
-| Performance         |
-| Optimization        |
-+---------------------+
-        │
-        ▼
-+--------------------+
-|  Error Logging     |
-| (Errors stored in  |
-|   log file)        |
-+--------------------+
++--------------------------------+  
+|  Logo Extraction               |  
+|  (BeautifulSoup & Selenium)    |  
++--------------------------------+  
+        │  
+        ▼  
++----------------------+  
+|  Image Processing    |  
+| (Resizing, Noise     |  
+|  Reduction, etc.)    |  
++----------------------+  
+        │  
+        ▼  
++----------------------+  
+|  Feature Extraction  |  
+| (Keypoints, Hashing) |  
++----------------------+  
+        │  
+        ▼  
++-------------------------+  
+|  Similarity Measurement |  
+| (SSIM, Histograms)      |  
++-------------------------+  
+        │  
+        ▼  
++-------------------------+  
+|   Clustering            |  
+| (Graph or Heuristic,    |  
+| DBSCAN (Density-Based   |  
+| Spatial Clustering of   |  
+| Applications with Noise)|  
++-------------------------+  
+        │  
+        ▼  
++---------------------+  
+| Scalability &       |  
+| Performance         |  
+| Optimization        |  
++---------------------+  
+        │  
+        ▼  
++--------------------+  
+|  Error Logging     |  
+| (Errors stored in  |  
+|   log file)        |  
++--------------------+  
 
 ## Functionality Breakdown
 
@@ -69,49 +69,49 @@ The solution is designed to cluster websites based on the visual similarities of
 
 The following diagram will explain how I managed the extraction of logos:
 
-+----------------------------------------------------+
-| Function: extract_logo_from_domain(domain)         |
-+----------------------------------------------------+
-        │
-        ▼
-+--------------------------------------+
-| 1. Try Using Requests & BeautifulSoup|
-| - Send HTTP request to domain        |
-| - Parse HTML for <link rel="icon">   |
-| - Parse HTML for <img> tags          |
-+--------------------------------------+
-        │
-        ├─> If found, return logo URL
-        │
-        ▼
-+-------------------------------------------------+
-| 2. If BeautifulSoup Fails, Use Selenium        |
-| - Set up headless Chrome WebDriver             |
-| - Open the website using HTTPS                 |
-| - Wait for the page to load                    |
-+-------------------------------------------------+
-        │
-        ▼
-+------------------------------------------------+
-| 3. Look for Favicon and Logo Using Selenium    |
-| - Check <link> tags for "icon", "shortcut icon"|
-| - Check <img> tags with class names:           |
-|   "logo", "site-logo", "brand-logo"            |
-+------------------------------------------------+
-        │
-        ▼
-+-------------------------------+
-| 4. Close WebDriver            |
-| - Release resources           |
-+-------------------------------+
-        │
-        ▼
-+-----------------------------------+
-| 5. Return Found Logo or None      |
-| - If favicon found, return it     |
-| - Else, return extracted <img> src|
-| - Log errors if any occur         |
-+-----------------------------------+
++----------------------------------------------------+  
+| Function: extract_logo_from_domain(domain)         |  
++----------------------------------------------------+  
+        │  
+        ▼  
++--------------------------------------+  
+| 1. Try Using Requests & BeautifulSoup|  
+| - Send HTTP request to domain        |  
+| - Parse HTML for <link rel="icon">   |  
+| - Parse HTML for <img> tags          |  
++--------------------------------------+  
+        │  
+        ├─> If found, return logo URL  
+        │  
+        ▼  
++-------------------------------------------------+   
+| 2. If BeautifulSoup Fails, Use Selenium        |  
+| - Set up headless Chrome WebDriver             |  
+| - Open the website using HTTPS                 |  
+| - Wait for the page to load                    |  
++-------------------------------------------------+  
+        │  
+        ▼  
++------------------------------------------------+  
+| 3. Look for Favicon and Logo Using Selenium    |  
+| - Check <link> tags for "icon", "shortcut icon"|  
+| - Check <img> tags with class names:           |  
+|   "logo", "site-logo", "brand-logo"            |  
++------------------------------------------------+  
+        │  
+        ▼  
++-------------------------------+  
+| 4. Close WebDriver            |  
+| - Release resources           |  
++-------------------------------+  
+        │  
+        ▼  
++-----------------------------------+  
+| 5. Return Found Logo or None      |  
+| - If favicon found, return it     |  
+| - Else, return extracted <img> src|  
+| - Log errors if any occur         |  
++-----------------------------------+  
 
 
 Explaation:
