@@ -15,7 +15,6 @@ from skimage.metrics import structural_similarity as ssim
 from skimage.feature import hog
 from sklearn.cluster import DBSCAN
 from collections import defaultdict
-
 #######
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -23,11 +22,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from urllib.parse import urljoin
-import time
 from selenium.webdriver.chrome.service import Service
-
 #####################
-
 import logging
 import sys
 
@@ -38,48 +34,51 @@ logging.basicConfig(filename='error_log.log', level=logging.ERROR,
 # Redirect stderr to log file
 sys.stderr = open('error_log.log', 'w')
 
-# Open a file for results
+# Redirect stdout to results file
 sys.stdout = open('results.txt', 'w')
 
-# Function to extract domains from the Parquet file
+
+
 def extract_domains_from_parquet(parquet_file_path):
-    # Read the Parquet file into a table
+
+    """Extract domain names from a Parquet file."""
+
+    # Parsing
     table = pq.read_table(parquet_file_path)
-
-    # Convert the table to a pandas DataFrame
     df = table.to_pandas()
-
-    # Extract the 'domain' column and store it in a list
     domains = df['domain'].tolist()
 
     return domains
 
 def extract_logo_from_domain(domain):
+    """Extract the logo URL for a given
+    domain using BeautifulSoup and Selenium."""
     try:
         # First, try using requests and BeautifulSoup for a quick extraction
         response = requests.get(f"http://{domain}")
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, "html.parser")
             
-            # Look for <link> tags containing 'icon' for favicon
+            # tags containing 'icon' for favicon
             favicon = soup.find("link", rel="icon")
             if favicon:
                 return urljoin(f"http://{domain}", favicon['href'])
 
-            # Look for <img> tags for logos
+            # tags for logos
             logo = soup.find("img")
             if logo:
                 return urljoin(f"http://{domain}", logo['src'])
 
-        # If BeautifulSoup fails to find the logo, use Selenium for dynamic content
-        # Set up Chrome options for Selenium (headless mode)
+        # If BeautifulSoup fails to find the logo, 
+        # try Selenium
+        # Set up Chrome options for Selenium
         chrome_options = Options()
-        chrome_options.add_argument("--headless")  # Run Chrome in headless mode
+        chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("window-size=1200x600")
 
         # Path to your ChromeDriver
-        chrome_driver_path = r"C:\Users\Maria\Downloads\chromedriver-win32\chromedriver-win32\chromedriver.exe"  # Replace with your ChromeDriver path
+        chrome_driver_path = r"C:\Users\Maria\Downloads\chromedriver-win32\chromedriver-win32\chromedriver.exe"
 
         # Initialize WebDriver
         service = Service(chrome_driver_path)
@@ -87,15 +86,14 @@ def extract_logo_from_domain(domain):
 
         # Ensure we're using HTTPS
         url = f"https://{domain}"
-
         driver.get(url)
 
-        # Wait for the page to load and look for images (adjust time if needed)
+        # Wait to do the job
         WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located((By.TAG_NAME, "img"))
         )
 
-        # Look for favicons in <link> tags
+        # favicons in <link> tags
         favicon_url = None
         link_tags = driver.find_elements(By.TAG_NAME, "link")
         for link in link_tags:
@@ -106,7 +104,7 @@ def extract_logo_from_domain(domain):
                     favicon_url = urljoin(url, href)
                     break
 
-        # Look for <img> tags with potential logo class names
+        # tags with potential logo class names
         logo_candidates = ["logo", "site-logo", "brand-logo"]
         logo_url = None
         if not favicon_url:
@@ -120,40 +118,31 @@ def extract_logo_from_domain(domain):
                 if logo_url:
                     break
 
-        # Close the WebDriver after extracting logo
+        # Close the WebDriver
         driver.quit()
 
-        # Return the logo URL if found, else None
         return favicon_url if favicon_url else logo_url
 
     except Exception as e:
         logging.error(f"Error fetching logo for {domain}: {e}")
-        #print(f"Error fetching logo for {domain}: {e}")
         return None
 
-# Function to store logos in map <domain, logo>
 def map_logos_to_domains(domains):
-    # Create an empty dictionary to store the logos
+    """Map logos to domains."""
+
     domain_logo_map = {}
 
-    # Iterate over the list of domains
     for domain in domains:
-        # Extract the logo for the domain
         logo = extract_logo_from_domain(domain)
-
-        # If a logo is found, add it to the dictionary
         if logo:
             domain_logo_map[domain] = logo
         else :
             domain_logo_map[domain] = "No logo found"
-
     return domain_logo_map
 
-# Preprocess Images
-# Resize all logos to a standard size for consistency.
-#Convert images to grayscale for feature extraction.
-# Function to resize image with padding (if necessary) to maintain aspect ratio
 def resize_with_padding(image, target_size):
+    """Resize an image with padding to match the target 
+        size while maintaining the aspect ratio."""
     height, width = image.shape
     target_width, target_height = target_size
 
@@ -166,9 +155,7 @@ def resize_with_padding(image, target_size):
         new_height = target_height
         new_width = int(target_height * aspect_ratio)
 
-    # Resize the image
     resized_image = cv2.resize(image, (new_width, new_height))
-
     # Pad the image to match the target size
     top = (target_height - new_height) // 2
     bottom = target_height - new_height - top
@@ -176,10 +163,11 @@ def resize_with_padding(image, target_size):
     right = target_width - new_width - left
 
     padded_image = cv2.copyMakeBorder(resized_image, top, bottom, left, right, cv2.BORDER_CONSTANT, value=255)
-
     return padded_image
+
 def process_images(logo_map):
-    """Loads and preprocesses images from URLs, ensuring they are ready for ORB feature extraction."""
+    """Download the image.
+       Resize images, Convert images to grayscale for feature extraction."""
     processed_images = {}
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -187,30 +175,24 @@ def process_images(logo_map):
 
     for domain, logo_url in logo_map.items():
         try:
-            if logo_url.startswith("http"):  # If it's a URL
-                # Remove query parameters from the URL (e.g., ?v2)
+            if logo_url.startswith("http"):
+                # Remove query parameters from the URL 
                 parsed_url = urlparse(logo_url)
                 cleaned_url = urlunparse(parsed_url._replace(query=""))
-
                 response = requests.get(cleaned_url, headers=headers, timeout=5)
-
                 # Check for successful response and valid image content type
                 if response.status_code == 200 and 'image' in response.headers.get('Content-Type', ''):
                     image_bytes = io.BytesIO(response.content)
-
                     # Handle ICO files (multi-image format)
                     if cleaned_url.endswith(".ico"):
                         try:
                             # Open the ICO file
                             img = Image.open(image_bytes)
-
-                            # If it's an ICO file with multiple images, try to extract the first image
-                            img.seek(0)  # Move to the first image in the ICO file
-                            img = img.convert("RGB")  # Convert to RGB if needed
+                            img.seek(0)
+                            img = img.convert("RGB")
                             img = np.array(img)
                             img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
                         except Exception as e:
-                            #print(f"Error processing ICO image for {domain}: {e}")
                             print(f"Error processing ICO image for {domain}: {e}", file=sys.stderr)
                             img = None
                     else:
@@ -218,32 +200,25 @@ def process_images(logo_map):
                             img_array = np.frombuffer(response.content, np.uint8)
                             img = cv2.imdecode(img_array, cv2.IMREAD_GRAYSCALE)
                         except Exception as e:
-                            #print(f"Error decoding image for {domain}: {e}")
                             print(f"Error decoding image for {domain}: {e}", file=sys.stderr)
                             img = None
-
-                    # Preprocess the image for ORB
+                    # Preprocess the image for feature extraction
                     if img is not None:
                         # Resize image to a standard size for consistency
-                        img = resize_with_padding(img, (200, 200))  # Resize to 200x200 pixels
-
+                        img = resize_with_padding(img, (200, 200))
                         # Apply a binary threshold to enhance the features
                         img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
                                                     cv2.THRESH_BINARY, 11, 2)
-
                         # Store processed image
                         processed_images[domain] = img
                     else:
-                        #print(f"Failed to process image for {domain}")
                         print(f"Failed to process image for {domain}", file=sys.stderr)
 
                 else:
-                    #print(f"Failed to download {cleaned_url} (Status Code: {response.status_code}) or invalid content type")
                     print(f"Failed to download {cleaned_url} (Status Code: {response.status_code}) or invalid content type", file=sys.stderr)
 
         except Exception as e:
             logging.error(f"Error processing {domain}: {e}")
-            #print(f"Error processing {domain}: {e}")
             print(f"Error processing {domain}: {e}", file=sys.stderr)
 
     return processed_images
@@ -254,7 +229,6 @@ def extract_hog_features(image):
     """Extract HOG features from an image."""
     if image is None or image.size == 0:
         raise ValueError("Invalid image: Image is empty or not loaded properly")
-    
     if len(image.shape) == 2:  # Already grayscale
         gray = image
     elif len(image.shape) == 3:
@@ -270,7 +244,6 @@ def compute_ssim(img1, img2):
     """Compute the Structural Similarity Index (SSIM) between two images."""
     if img1 is None or img2 is None:
         raise ValueError("One or both images are empty or not loaded properly")
-    
     # Ensure both images are grayscale
     if len(img1.shape) == 3:
         gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
@@ -281,10 +254,10 @@ def compute_ssim(img1, img2):
         gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
     else:
         gray2 = img2  # Already grayscale
-    
     # Compute SSIM
     score, _ = ssim(gray1, gray2, full=True)
     return score
+
 def match_features(feature1, feature2):
     """Compute similarity score between two feature vectors."""
     return np.linalg.norm(feature1 - feature2)
@@ -327,46 +300,33 @@ def group_similar_logos(logo_map, threshold):
     grouped_results = defaultdict(list)
     
     for i, label in enumerate(clustering.labels_):
-        if label == -1:  # Outliers (logos that are not similar to others)
+        if label == -1:
             grouped_results[i].append(domains[i])  # Treat each outlier as its own group
         else:
             grouped_results[label].append(domains[i])  # Group similar logos together
-    
-    # Return the grouped results
+
     return grouped_results
 
-
-# Main function to execute the script
+# Main function
 def main():
-    # Define the path to your Parquet file
+
     parquet_file_path = r"C:\Users\Maria\Downloads\logos.snappy.parquet"
-    
-    # Call the function to extract domains
+
     #domains = extract_domains_from_parquet(parquet_file_path)
 
-    # Print the list of domains
+    # For testing
     #print(domains)
-
-    # Define a list of domains for testing
     domains = ["google.com","target.com", "target.com", "facebook.com", "microsoft.com", "apple.com", "ikea.com.hk", "ikea.com.cn", "ikea.com", "culliganheartland.com", "kierpensions.co.uk", "kier.co.uk", "kiergroup.com", "linde.pe"]
 
-    # Call the function to map logos to domains
     domain_logo_map = map_logos_to_domains(domains)
-
-    # Print the domain-logo map
     for domain, logo in domain_logo_map.items():
         print(f"Domain: {domain}, Logo: {logo}")
 
-    # Group similar logos
     similar_logo_groups = group_similar_logos(domain_logo_map, threshold=0.1)
 
-    # Print the final grouped result
     for group, domains in similar_logo_groups.items():
-        #print(f"Group {group}: {domains}")
-        # write in results file
+
         print(f"Group {group}: {domains}", file=sys.stdout)
-
-
 
 
 # Run the main function
