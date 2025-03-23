@@ -312,11 +312,11 @@ def main():
 
     parquet_file_path = r"C:\Users\Maria\Downloads\logos.snappy.parquet"
 
-    #domains = extract_domains_from_parquet(parquet_file_path)
+    domains = extract_domains_from_parquet(parquet_file_path)
 
     # For testing
     #print(domains)
-    domains = ["google.com","target.com", "target.com", "facebook.com", "microsoft.com", "apple.com", "ikea.com.hk", "ikea.com.cn", "ikea.com", "culliganheartland.com", "kierpensions.co.uk", "kier.co.uk", "kiergroup.com", "linde.pe"]
+    #domains = ["google.com","target.com", "target.com", "facebook.com", "microsoft.com", "apple.com", "ikea.com.hk", "ikea.com.cn", "ikea.com", "culliganheartland.com", "kierpensions.co.uk", "kier.co.uk", "kiergroup.com", "linde.pe"]
 
     domain_logo_map = map_logos_to_domains(domains)
     for domain, logo in domain_logo_map.items():
