@@ -20,27 +20,27 @@ The solution is designed to cluster websites based on the visual similarities of
 |  Logo Extraction               |  
 |  (BeautifulSoup & Selenium)    |  
 +--------------------------------+  
-        │  
-        ▼  
+             │  
+             ▼  
 +----------------------+  
 |  Image Processing    |  
 | (Resizing, Noise     |  
 |  Reduction, etc.)    |  
 +----------------------+  
-        │  
-        ▼  
+              │  
+              ▼  
 +----------------------+  
 |  Feature Extraction  |  
 | (Keypoints, Hashing) |  
 +----------------------+  
-        │  
-        ▼  
+             │  
+             ▼  
 +-------------------------+  
 |  Similarity Measurement |  
 | (SSIM, Histograms)      |  
 +-------------------------+  
-        │  
-        ▼  
+              │  
+              ▼  
 +-------------------------+  
 |   Clustering            |  
 | (Graph or Heuristic,    |  
@@ -48,15 +48,15 @@ The solution is designed to cluster websites based on the visual similarities of
 | Spatial Clustering of   |  
 | Applications with Noise)|  
 +-------------------------+  
-        │  
-        ▼  
+           │  
+           ▼  
 +---------------------+  
 | Scalability &       |  
 | Performance         |  
 | Optimization        |  
 +---------------------+  
-        │  
-        ▼  
+             │  
+             ▼  
 +--------------------+  
 |  Error Logging     |  
 | (Errors stored in  |  
