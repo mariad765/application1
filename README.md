@@ -681,4 +681,21 @@ The flow of the main function is:
                                                                                          [Group Similar Logos] --> [Display Groups]
 
 </pre>
+# How to install
 
+### Prerequisites
+
+ 
+pip install pyarrow requests beautifulsoup4 opencv-python-headless numpy scikit-learn Pillow scikit-image selenium
+
+
+Install ChromeDriver   
+[https://youtu.be/dz59GsdvUF8]  
+
+
+git clone <repo>
+
+# How to run
+
+
+python main.py
