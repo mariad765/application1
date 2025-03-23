@@ -62,13 +62,13 @@ The solution is designed to cluster websites based on the visual similarities of
 | (Errors stored in  |  
 |   log file)        |  
 +--------------------+  
-
+</pre>
 ## Functionality Breakdown
 
 ### Extracting the logos
 
 The following diagram will explain how I managed the extraction of logos:
-
+<pre>
 +----------------------------------------------------+  
 | Function: extract_logo_from_domain(domain)         |  
 +----------------------------------------------------+  
