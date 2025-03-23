@@ -431,6 +431,8 @@ The SSIM index takes three main factors into account:
 
 * Structure: This compares the patterns in the images, capturing how similar the spatial arrangement of pixels is.
 
+![WhatsApp Image 2025-03-23 at 23 02 16_361b2204](https://github.com/user-attachments/assets/f023af99-d507-4385-97e2-762169095e18)
+
 The SSIM score is a numerical value that quantifies the similarity between the two images. A higher score means that the images are more similar in terms of structure, contrast, and luminance.
 
 <pre>
@@ -570,6 +572,9 @@ match_features(feature1, feature2) - this function calculates the similarity sco
     |   [0.6, 0.8, 1.0]]          |
     +-----------------------------+
  </pre>
+
+ ![WhatsApp Image 2025-03-23 at 23 12 01_f49e052f](https://github.com/user-attachments/assets/91c8211e-dad0-4899-8bcf-7fdc430d121d)
+
 
  The logos are grouped  based on the similarity matrix.
  <pre>
